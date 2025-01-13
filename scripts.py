@@ -35,6 +35,6 @@ def check_name(student_name):
 def check_subject(item_name, year_of_study):
     try:
         subject = Subject.objects.get(title=item_name, year_of_study=year_of_study)
-        return subjec
+        return subject
     except Subject.DoesNotExist:  # Здесь тоже используем специфичное исключение
         raise ValueError('Введены некорректные данные. Предмет не найден.')
