@@ -4,17 +4,17 @@ from datacenter.models import Subject, Lesson, Chastisement, Mark, Commendation,
 
 
 def fix_marks(student_name):
-    student = check_name(student_name)
+    student = get_name(student_name)
     Mark.objects.filter(schoolkid=student, points__lt=4).update(points=random.randint(4, 5))
 
 def remove_chastisements(student_name):
-    student = check_name(student_name)
+    student = get_name(student_name)
     teachers_comments = Chastisement.objects.filter(schoolkid=student)
     teachers_comments.delete()
 
 def create_commendation(student_name, subject):
-    student = check_name(student_name)
-    school_subject = check_subject(subject, student.year_of_study)
+    student = get_name(student_name)
+    school_subject = get_subject(subject, student.year_of_study)
     lesson = Lesson.objects.filter(subject=school_subject).order_by('-date').first()
     if lesson is None:
         return 'Данного урока нет'
@@ -22,7 +22,7 @@ def create_commendation(student_name, subject):
         comments = random.choice(file.readlines())
     Commendation.objects.create(schoolkid=student, subject=school_subject, text=comments, created=lesson.date, teacher=lesson.teacher)
 
-def check_name(student_name):
+def get_name(student_name):
     try:
         student = Schoolkid.objects.get(full_name__contains=student_name)
         return student
@@ -31,7 +31,7 @@ def check_name(student_name):
     except Schoolkid.DoesNotExist:
         raise ValueError('Введены некорректные данные. Ученик не найден.')
 
-def check_subject(item_name, year_of_study):
+def get_subject(item_name, year_of_study):
     try:
         subject = Subject.objects.get(title=item_name, year_of_study=year_of_study)
         return subject
