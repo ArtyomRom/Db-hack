@@ -15,7 +15,9 @@ def remove_chastisements(student_name):
 def create_commendation(student_name, subject):
     student = check_name(student_name)
     school_subject = check_subject(subject, student.year_of_study)
-    lesson = Lesson.objects.filter(subject=school_subject).order_by('date').first()
+    lesson = Lesson.objects.filter(subject=school_subject).order_by('-date').first()
+    if lesson is None:
+        return 'Данного урока нет'
     with open('comments.txt', 'r', encoding='utf-8') as file:
         comments = random.choice(file.readlines())
     Commendation.objects.create(schoolkid=student, subject=school_subject, text=comments, created=lesson.date, teacher=lesson.teacher)
